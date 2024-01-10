@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Psyai 2DPaaS Interaction WebRTC Example</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #remoteSdp {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px 15px;
+            margin-top: 20px;
+            font-size: 16px;
+            width: calc(100% - 40px); /* Consider padding and button width */
+            max-width: 400px; /* Maximum width */
+        }
+
+        button {
+            background-color: #4285f4; /* Google Blue */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-top: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #357ae8; /* A shade darker for hover state */
+        }
+
+        .video-container {
+            width: calc(100% - 40px); /* Consider padding */
+            max-width: 1080px; /* Maximum width consistent with video resolution */
+            margin-top: 20px; /* Space between button and video */
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.15);
+            border-radius: 4px;
+            overflow: hidden; /* Clip the video so corners are rounded */
+        }
+
+        video {
+            width: 1080px; /* Width as requested */
+            height: 1920px; /* Height as requested */
+            max-height: 80vh; /* Adjusted for viewport height */
+            object-fit: contain; /* Prevent distortion */
+        }
+    </style>
+</head>
+<body>
+
+<input id="remoteSdp"/>
+<button id="startButton">Start Interaction</button>
+<div class="video-container">
+    <video id="remoteVideo" autoplay playsinline ></video>
+</div>
+
+<script src="webrtc.js"></script>
+</body>
+</html>

@@ -1,8 +1,14 @@
-# start API server
+# 2DPaaS-InteractiveHuman-WebDemo
 
-## 启动uvicorn:
+## 简介
+![流程](res/2DPaaS-DH-RTC.png)
+
+## require
+`npm`
+
+## 安装依赖：
 ```bash
-uvicorn main:app --reload
+npm install live-server@latest
 ```
 
 ## 启动网页：
