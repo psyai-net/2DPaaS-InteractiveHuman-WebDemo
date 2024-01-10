@@ -72,25 +72,9 @@ async function prepareSDP() {
     };
 
     peerConnection.createOffer(offerSdpOption).then(async function (offer) {
-        var stringSdp = offer.sdp.toString();
-        var arrSdp = stringSdp.split("\r\n");
-        var stringSdpModify = "";
-
-        for (var i = 0; i < arrSdp.length - 1; i++) {
-            if (arrSdp[i].lastIndexOf("a=fmtp:111") != -1) {
-                stringSdpModify += arrSdp[i] + ";stereo=1" + "\r\n";
-            } else {
-                stringSdpModify += arrSdp[i] + "\r\n";
-            }
-        }
-        console.log("peerConnection.split3");
         console.warn(`${JSON.stringify(offer.sdp)}`)
-
         peerConnection.setLocalDescription(offer);
-
         localOffer = offer
-
-
     }).catch(function(reason) {
         console.log('create offer failed : reason = ' + reason);
     });
