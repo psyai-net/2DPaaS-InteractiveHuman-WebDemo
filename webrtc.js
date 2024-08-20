@@ -5,7 +5,6 @@ document.getElementById('stopButton').addEventListener('click', endSession);
 const startButton = document.getElementById('startButton');
 const loadingIndicator = document.getElementById('loading');
 
-
 const ak = "N8v8gfwkZBDC9Q4IKvB5lbJqtbxCr6rn";
 const uid = "6492761184d0ff378d61b80d";
 const sk = "B4vrRbyeODAF1H6svj0txqYfaxRlv3N3LInCYePpsSs8Phk1hY7m3EBXm2tZe7lw";
@@ -14,6 +13,14 @@ let peerConnection;
 let localOffer;
 let websocket;
 let sessionId;
+
+document.querySelectorAll('.image-section img').forEach(img => {
+    img.addEventListener('click', (event) => {
+        document.querySelectorAll('.image-section img').forEach(img => img.classList.remove('selected'));
+        event.target.classList.add('selected');
+        startButton.disabled = false; // 启用开始会话按钮
+    });
+});
 
 async function handleStartButtonClick() {
     startButton.disabled = true; // 禁用按钮
@@ -27,36 +34,19 @@ async function handleStartButtonClick() {
     }
 }
 
-document.querySelectorAll('.image-section img').forEach(img => {
-    img.addEventListener('click', (event) => {
-        document.querySelectorAll('.image-section img').forEach(img => img.classList.remove('selected'));
-        event.target.classList.add('selected');
-        startButton.disabled = false; // 启用开始会话按钮
-    });
-});
-
 function formatContent(ak, uid, timeStamp) {
     return `ak=${ak}&uid=${uid}&timestamp=${timeStamp}`;
 }
-async function generateSignature(content, sk) {
-    const encoder = new TextEncoder();
-    const key = await crypto.subtle.importKey(
-        "raw", 
-        encoder.encode(sk), 
-        { name: "HMAC", hash: "SHA-256" },
-        false, 
-        ["sign"]
-    );
-    const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(content));
-    return Array.from(new Uint8Array(signature))
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('');
+
+function generateSignature(content, sk) {
+    const hash = CryptoJS.HmacSHA256(content, sk);
+    return hash.toString(CryptoJS.enc.Hex);
 }
 
 async function getAkAndSig() {
     const t = Math.floor(Date.now() / 1000);
     const content = formatContent(ak, uid, t);
-    const sig = await generateSignature(content, sk);
+    const sig = generateSignature(content, sk);
     return { ak, sig, timeStamp: t };
 }
 
@@ -127,7 +117,7 @@ async function fetchStreamDrive(sessionId, virtualmanKey) {
     }
 }
 
-async function prepareSDP(virtualmanKey,speakerKey) {
+async function prepareSDP(virtualmanKey, speakerKey) {
     const config = {
         iceServers: [],
         rtcpMuxPolicy: "require",
@@ -184,13 +174,14 @@ async function prepareSDP(virtualmanKey,speakerKey) {
         await fetchStreamDrive(sessionId, virtualmanKey);
         console.log('Set remote description and drive session successfully.');
 
-        await initializeWebSocket(sessionId, virtualmanKey,speakerKey);
+        await initializeWebSocket(sessionId, virtualmanKey, speakerKey);
     } catch (error) {
         console.error('There has been an error:', error);
+        throw error; // 抛出错误以确保finally块正确执行
     }
 }
 
-async function initializeWebSocket(sessionId, virtualmanKey,speakerKey) {
+async function initializeWebSocket(sessionId, virtualmanKey, speakerKey) {
     const { ak, sig, timeStamp } = await getAkAndSig();
     const url = `wss://dev.api.psyai.net/v1/jobgate/stream/msg/send?sessionId=${sessionId}&vk=${virtualmanKey}&ak=${ak}&sig=${sig}&timeStamp=${timeStamp}&speakerId=${speakerKey}&uid=${uid}`;
     websocket = new WebSocket(url);
@@ -274,7 +265,6 @@ async function fetchKnowledgeBase(question) {
         throw new Error('Failed to fetch from knowledge base: Network response was not ok');
     }
 }
-
 
 async function fetchStreamStop(sessionId, virtualmanKey) {
     const { ak, sig, timeStamp } = await getAkAndSig();
