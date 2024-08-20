@@ -7,146 +7,197 @@
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f7f7f7;
+            margin: 0;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+        }
+
+        #remoteVideo {
+            width: 100%;
+            height: auto;
+            max-height: 80vh; /* 确保视频不会超出视口高度 */
+            object-fit: contain; /* 保持视频的宽高比 */
+            border: 1px solid black; /* 可选: 给视频边框以区分 */
+        }
+
+        #loading {
+            color: #4285f4;
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4285f4;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+            margin-bottom: -2px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .main-container {
             display: flex;
-            width: calc(100% - 20px); /* 考虑边距，保持整体水平间距 */
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            background-color: #fff;
         }
 
         .left-section {
             display: flex;
             flex-direction: column;
-            width: 200px; /* 调整左侧部分的宽度 */
-            height: 100%; /* 占满整体高度 */
+            width: 250px;
+            border-right: 1px solid #ddd;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #f0f0f0;
         }
 
         .image-section {
             display: flex;
             flex-direction: column;
-            gap: 1px; /* 较小的人物间距 */
-            padding: 10px 0 0 0; /* 左右边距都设为0 */
-            align-items: flex-start; /* 确保内容向左对齐 */
-            flex-grow: 1; /* 占据剩余空间 */
-            overflow-y: auto; /* 超过部分启用纵向滚动 */
+            gap: 1px;
+            padding: 10px 0;
+            flex-grow: 1;
+            overflow-y: auto;
         }
 
         .image-container {
             display: flex;
-            flex-direction: column; /* 垂直排列 */
-            align-items: center; /* 水平居中 */
-            text-align: center; /* 确保文字居中 */
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
         }
 
         .image-section img {
-            width: 95px;
-            height: 95px;
+            width: 100px;
+            height: 100px;
             cursor: pointer;
-            border-radius: 4px;
-            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-            margin-bottom: 2px; /* 图片与文字之间的间距 */
-            transition: box-shadow 0.3s;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
 
         .image-section img:hover {
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
         }
 
         .image-section img.selected {
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.8);
-            border: 2px solid #00ff00;
+            border-color: #4285f4;
         }
 
         figcaption {
-            font-size: 12px;
+            font-size: 14px;
             font-weight: bold;
             color: #333;
-            text-align: center; /* 确保文字居中展示 */
+            margin-top: 5px;
         }
 
         .button-container {
-            margin-top: auto; /* 将按钮容器推到最底部 */
-            padding: 10px 0; /* 内间距确保按钮不紧贴边框 */
-            width: 100%;
-            box-sizing: border-box; /* 使padding也算在width内 */
-            background-color: #fff; /* 背景颜色与人物列表区分 */
+            padding: 10px 0;
         }
 
         .button-container button {
             width: 100%;
-            margin-top: 5px; /* 按钮间的间距 */
-            background-color: #4285f4; /* Google 蓝色 */
+            margin-bottom: 10px;
+            background-color: #4285f4;
             color: white;
             border: none;
             padding: 10px 0;
             text-transform: uppercase;
             font-weight: bold;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            transition: background-color 0.3s;
         }
 
         .button-container button:hover {
-            background-color: #357ae8; /* 悬停状态下稍深的颜色 */
+            background-color: #357ae8;
         }
 
         .video-message-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
             width: 100%;
-            max-height: 100%; /* 确保不超出整体高度 */
         }
 
         .video-container {
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
-            border-radius: 4px;
-            overflow: hidden; /* 剪切视频以让角变得圆滑 */
-            width: 100%;
-            flex-grow: 1; /* 占据剩余的空间 */
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative; /* 为了 text-display 绝对定位 */
         }
 
-        video {
-            width: 100%;
-            height: 100%; /* 使视频高度占满剩余空间 */
-            object-fit: cover; /* 确保视频填充整个容器 */
+        .text-display {
+            position: absolute;
+            bottom: 8%;
+            background-color: transparent;
+            width: 30%;
+            height: 30%;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            z-index: 1;
+        }
+
+        .question, .answer {
+            margin-bottom: 20px;
+        }
+
+        .question {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .answer {
+            font-size: 14px;
+            color: #666;
         }
 
         .message-section {
             display: flex;
             gap: 10px;
-            width: 100%;
-            padding: 10px 0; /* 给输入框和按钮一些高度间距 */
-            align-items: center;
+            padding: 20px;
+            border-top: 1px solid #ddd;
+            background-color: #f9f9f9;
         }
 
         .message-section input {
+            flex-grow: 1;
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ccc;
-            border-radius: 4px;
-            flex: 1;
+            border-radius: 5px;
+            box-sizing: border-box;
         }
 
         .message-section button {
-            background-color: #4285f4; /* Google 蓝色 */
+            background-color: #4285f4;
             color: white;
             border: none;
             padding: 10px 20px;
             text-transform: uppercase;
             font-weight: bold;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            transition: background-color 0.3s;
         }
 
         .message-section button:hover {
-            background-color: #357ae8; /* 悬停状态下稍深的颜色 */
+            background-color: #357ae8;
         }
     </style>
 </head>
@@ -155,23 +206,24 @@
     <div class="left-section">
         <div class="image-section">
             <figure class="image-container">
-                <img src="https://assets.psyai.net/public/217022646a6a52c478de0209092db159e8f31e14.png" data-virtualmankey="1f0565e823f5477ca31b5466d1d67c1f" alt="Image 1">
+                <img src="https://assets.psyai.net/public/217022646a6a52c478de0209092db159e8f31e14.png" data-virtualmankey="1f0565e823f5477ca31b5466d1d67c1f"  data-speaker="640241757c000a32e1ff0357" alt="Image 1">
                 <figcaption>奇奇</figcaption>
             </figure>
-            <figure class="image-container">
-                <img src="https://assets.psyai.net/public/217022646a6a52c478de0209092db159e8f31e14.png" data-virtualmankey="1f0565e823f5477caasd5dd7d67c1f" alt="Image 2">
-                <figcaption>莉莉</figcaption>
-            </figure>
-            <!-- 添加更多人物 -->
         </div>
         <div class="button-container">
-            <button id="startButton">开始会话</button>
+            <button id="startButton" disabled>开始会话</button>
             <button id="stopButton">结束会话</button>
-        </div>
+            <div id="loading" style="display: none;">
+                <div class="spinner"></div> 加载中，请稍候...</div>
+            </div>
     </div>
     <div class="video-message-container">
         <div class="video-container">
             <video id="remoteVideo" controls autoplay playsinline></video>
+            <div class="text-display">
+                <div class="question" id="questionText"></div>
+                <div class="answer" id="answerText"></div>
+            </div>
         </div>
         <div class="message-section">
             <input type="text" id="messageInput" placeholder="输入消息...">
